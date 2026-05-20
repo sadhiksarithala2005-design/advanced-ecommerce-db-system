@@ -1,0 +1,18 @@
+[
+    {
+        "Customer_ID": 1,
+        "Name": "Sadhik Sarithala",
+        "Email": "sadhiksarithala2005@gmail.com",
+        "Password": "$2b$12$mPrGQlndZqoa3goE2Uv9meSkgkGzZL1RLshoW7e.40IMpXxkDJ41.",
+        "Phone": "9876543210",
+        "Address": "Hyderabad, India"
+    },
+    {
+        "Customer_ID": 2,
+        "Name": "Sadhik Sarithala",
+        "Email": "prabhassadhik@gmail.com",
+        "Password": "$2b$12$ArHqKcSS2Bheqk8CmzXM9OO7hBeadLb/ohDJCi06qHk1NjJ9Z7AoW",
+        "Phone": "",
+        "Address": ""
+    }
+]

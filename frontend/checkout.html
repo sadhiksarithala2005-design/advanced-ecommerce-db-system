@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - ShopEase</title>
+    <!-- Apply theme early to prevent flash -->
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+    <!-- Import Premium Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Default Dark Theme variables */
+            --primary-grad: linear-gradient(135deg, #a855f7 0%, #6366f1 50%, #06b6d4 100%);
+            --primary: #06b6d4;
+            --secondary: #6366f1;
+            --bg-color: #060713;
+            --card-bg: rgba(18, 20, 38, 0.7);
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(99, 102, 241, 0.15);
+            --accent: #f43f5e;
+            --success: #10b981;
+            
+            --bg-glow-1: rgba(168, 85, 247, 0.15);
+            --bg-glow-2: rgba(6, 182, 212, 0.12);
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            --card-hover-shadow: 0 20px 40px rgba(6, 182, 212, 0.12);
+            --card-hover-border: rgba(6, 182, 212, 0.4);
+            --nav-bg: rgba(8, 9, 20, 0.75);
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --input-focus-bg: rgba(255, 255, 255, 0.1);
+            --select-bg: #0d0e1b;
+            --image-wrap-bg: #080914;
+        }
+
+        html[data-theme="light"] {
+            /* Light Theme variables */
+            --primary-grad: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --bg-color: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-color: #0f172a;
+            --text-muted: #64748b;
+            --border-color: rgba(226, 232, 240, 0.8);
+            --accent: #f43f5e;
+            --success: #10b981;
+            
+            --bg-glow-1: rgba(99, 102, 241, 0.05);
+            --bg-glow-2: rgba(168, 85, 247, 0.05);
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            --card-hover-shadow: 0 20px 40px rgba(99, 102, 241, 0.08);
+            --card-hover-border: rgba(99, 102, 241, 0.2);
+            --nav-bg: rgba(255, 255, 255, 0.8);
+            --input-bg: rgba(241, 245, 249, 0.6);
+            --input-focus-bg: white;
+            --select-bg: white;
+            --image-wrap-bg: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            background-image: 
+                radial-gradient(at 0% 0%, var(--bg-glow-1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, var(--bg-glow-2) 0px, transparent 50%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Navbar */
+        nav {
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .nav-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--primary-grad);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        /* Main Layout */
+        .container {
+            max-width: 1000px;
+            margin: 3rem auto;
+            display: flex;
+            gap: 2.5rem;
+            padding: 0 2rem;
+        }
+
+        .form-section {
+            flex: 2;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .summary-section {
+            flex: 1;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            height: fit-content;
+            box-shadow: var(--card-shadow);
+            position: sticky;
+            top: 100px;
+            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        select, input {
+            width: 100%;
+            padding: 0.85rem 1.25rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--input-bg);
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text-color);
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        select:focus, input:focus {
+            border-color: var(--primary);
+            background: var(--input-focus-bg);
+            box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15);
+        }
+
+        /* select option color styling for dark/light mode compatibility */
+        select option {
+            background-color: var(--select-bg);
+            color: var(--text-color);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.85rem;
+            background: var(--primary-grad);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+        }
+
+        .btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:disabled {
+            background: var(--input-bg);
+            color: var(--text-muted);
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .theme-toggle-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+        }
+
+        .theme-toggle-btn:hover {
+            transform: scale(1.08) rotate(15deg);
+            background: var(--input-focus-bg);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="nav-logo">ShopEase Checkout</a>
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()"></button>
+            <a href="cart.html" style="text-decoration: none; color: var(--text-color); font-weight: 500;">Back to Cart</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-section">
+            <h2>Payment Method</h2>
+            <form id="checkoutForm">
+                <div class="form-group">
+                    <label>Select Payment Method</label>
+                    <select id="paymentMethod" required>
+                        <option value="UPI">UPI</option>
+                        <option value="Card">Credit/Debit Card</option>
+                        <option value="NetBanking">Net Banking</option>
+                        <option value="COD">Cash on Delivery</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">Place Order</button>
+            </form>
+            <div id="errorMsg" style="color:red; margin-top:1rem;"></div>
+        </div>
+
+        <div class="summary-section">
+            <h2>Summary</h2>
+            <p>Total Items: <strong id="totalItems">0</strong></p>
+            <h3>Amount to Pay: <br><span id="totalAmount" style="color: var(--primary);">₹0.00</span></h3>
+        </div>
+    </div>
+
+    <script>
+        const formatMoney = (amount) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            alert("Please login to proceed to checkout.");
+            window.location.href = 'login.html';
+        }
+        if (cart.length === 0) {
+            alert("Your cart is empty.");
+            window.location.href = 'shop.html';
+        }
+
+        let total = 0;
+        let itemCount = 0;
+        cart.forEach(item => {
+            total += item.price * item.quantity;
+            itemCount += item.quantity;
+        });
+
+        document.getElementById('totalItems').innerText = itemCount;
+        document.getElementById('totalAmount').innerText = formatMoney(total);
+
+        document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const btn = e.target.querySelector('button');
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('http://127.0.0.1:5000/api/orders/place', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ items: cart, payment_method: paymentMethod })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    localStorage.removeItem('cart');
+                    window.location.href = 'order-success.html';
+                } else {
+                    document.getElementById('errorMsg').innerText = data.error || 'Failed to place order';
+                    btn.innerText = "Place Order";
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                document.getElementById('errorMsg').innerText = 'Network error.';
+                btn.innerText = "Place Order";
+                btn.disabled = false;
+            }
+        });
+
+        // Theme toggling functions
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeButton(newTheme);
+        }
+
+        function updateThemeButton(theme) {
+            const btn = document.getElementById('themeToggle');
+            if (btn) {
+                btn.innerHTML = theme === 'dark' ? '☀️' : '🌙';
+            }
+        }
+        
+        // Initial Theme Toggle button load
+        updateThemeButton(savedTheme);
+    </script>
+</body>
+</html>

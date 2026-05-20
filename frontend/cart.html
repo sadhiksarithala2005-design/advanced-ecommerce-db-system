@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - ShopEase</title>
+    <!-- Apply theme early to prevent flash -->
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+    <!-- Import Premium Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Default Dark Theme variables */
+            --primary-grad: linear-gradient(135deg, #a855f7 0%, #6366f1 50%, #06b6d4 100%);
+            --primary: #06b6d4;
+            --secondary: #6366f1;
+            --bg-color: #060713;
+            --card-bg: rgba(18, 20, 38, 0.7);
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(99, 102, 241, 0.15);
+            --accent: #f43f5e;
+            --success: #10b981;
+            
+            --bg-glow-1: rgba(168, 85, 247, 0.15);
+            --bg-glow-2: rgba(6, 182, 212, 0.12);
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            --card-hover-shadow: 0 20px 40px rgba(6, 182, 212, 0.12);
+            --card-hover-border: rgba(6, 182, 212, 0.4);
+            --nav-bg: rgba(8, 9, 20, 0.75);
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --input-focus-bg: rgba(255, 255, 255, 0.1);
+            --select-bg: #0d0e1b;
+            --image-wrap-bg: #080914;
+        }
+
+        html[data-theme="light"] {
+            /* Light Theme variables */
+            --primary-grad: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --bg-color: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-color: #0f172a;
+            --text-muted: #64748b;
+            --border-color: rgba(226, 232, 240, 0.8);
+            --accent: #f43f5e;
+            --success: #10b981;
+            
+            --bg-glow-1: rgba(99, 102, 241, 0.05);
+            --bg-glow-2: rgba(168, 85, 247, 0.05);
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            --card-hover-shadow: 0 20px 40px rgba(99, 102, 241, 0.08);
+            --card-hover-border: rgba(99, 102, 241, 0.2);
+            --nav-bg: rgba(255, 255, 255, 0.8);
+            --input-bg: rgba(241, 245, 249, 0.6);
+            --input-focus-bg: white;
+            --select-bg: white;
+            --image-wrap-bg: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            background-image: 
+                radial-gradient(at 0% 0%, var(--bg-glow-1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, var(--bg-glow-2) 0px, transparent 50%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Navbar */
+        nav {
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .nav-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--primary-grad);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        /* Main Layout */
+        .container {
+            max-width: 1100px;
+            margin: 3rem auto;
+            display: flex;
+            gap: 2.5rem;
+            padding: 0 2rem;
+        }
+
+        .cart-items {
+            flex: 2;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .summary {
+            flex: 1;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            height: fit-content;
+            box-shadow: var(--card-shadow);
+            position: sticky;
+            top: 100px;
+            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            transition: all 0.3s;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.85rem;
+            background: var(--primary-grad);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            box-sizing: border-box;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+        }
+
+        .btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-outline {
+            background: var(--input-bg);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: var(--input-focus-bg);
+            box-shadow: none;
+        }
+
+        .qty-btn {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--primary);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .qty-btn:hover {
+            background: var(--primary-grad);
+            color: white;
+        }
+
+        .remove-btn {
+            color: var(--accent);
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: opacity 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .remove-btn:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .theme-toggle-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+        }
+
+        .theme-toggle-btn:hover {
+            transform: scale(1.08) rotate(15deg);
+            background: var(--input-focus-bg);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="nav-logo">ShopEase</a>
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()"></button>
+            <a href="shop.html" style="text-decoration: none; color: var(--text-color); font-weight: 500;">Back to Shop</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="cart-items" id="cartContainer">
+            <h2>Your Cart</h2>
+            <div id="cartList"></div>
+        </div>
+        <div class="summary">
+            <h2>Order Summary</h2>
+            <p>Subtotal: <strong id="subtotal">₹0.00</strong></p>
+            <p>Shipping: <strong>Free</strong></p>
+            <hr>
+            <h3>Total: <span id="total">₹0.00</span></h3>
+            <a href="checkout.html" class="btn" id="checkoutBtn">Proceed to Checkout</a>
+            <a href="shop.html" class="btn btn-outline">Continue Shopping</a>
+        </div>
+    </div>
+
+    <script>
+        const formatMoney = (amount) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function renderCart() {
+            const cartList = document.getElementById('cartList');
+            let subtotal = 0;
+            cartList.innerHTML = '';
+
+            if (cart.length === 0) {
+                cartList.innerHTML = '<p>Your cart is empty.</p>';
+                document.getElementById('checkoutBtn').style.pointerEvents = 'none';
+                document.getElementById('checkoutBtn').style.opacity = '0.5';
+            } else {
+                document.getElementById('checkoutBtn').style.pointerEvents = 'auto';
+                document.getElementById('checkoutBtn').style.opacity = '1';
+                cart.forEach((item, index) => {
+                    const itemTotal = item.price * item.quantity;
+                    subtotal += itemTotal;
+                    cartList.innerHTML += `
+                        <div class="cart-item">
+                            <div>
+                                <strong>${item.name}</strong><br>
+                                ${formatMoney(item.price)}
+                            </div>
+                            <div>
+                                <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
+                                ${item.quantity}
+                                <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+                            </div>
+                            <div>
+                                <strong>${formatMoney(itemTotal)}</strong><br>
+                                <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('subtotal').innerText = formatMoney(subtotal);
+            document.getElementById('total').innerText = formatMoney(subtotal);
+        }
+
+        function updateQty(index, change) {
+            cart[index].quantity += change;
+            if (cart[index].quantity <= 0) cart.splice(index, 1);
+            saveAndRender();
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            saveAndRender();
+        }
+
+        function saveAndRender() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        // Theme toggling functions
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeButton(newTheme);
+        }
+
+        function updateThemeButton(theme) {
+            const btn = document.getElementById('themeToggle');
+            if (btn) {
+                btn.innerHTML = theme === 'dark' ? '☀️' : '🌙';
+            }
+        }
+        
+        // Initial Theme Toggle button load
+        updateThemeButton(savedTheme);
+
+        renderCart();
+    </script>
+</body>
+</html>
