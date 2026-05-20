@@ -5,9 +5,6 @@ import re
 import os
 import json
 
-# We need access to the mysql object from app
-from app import mysql
-
 auth_bp = Blueprint('auth', __name__)
 
 # JSON persistent file path for mock users fallback
@@ -46,6 +43,7 @@ def save_mock_users(users):
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
+    from app import mysql
     data = request.get_json()
     name = data.get('name')
     email = data.get('email')
@@ -108,6 +106,7 @@ def register():
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
+    from app import mysql
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
@@ -150,6 +149,7 @@ def login():
 @auth_bp.route('/profile', methods=['GET'])
 @jwt_required()
 def profile():
+    from app import mysql
     current_user_id = get_jwt_identity()
     
     try:
