@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - ShopEase</title>
-    <!-- Apply theme early to prevent flash -->
+
     <script>
         const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
     </script>
-    <!-- Import Premium Google Font -->
+
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            /* Default Dark Theme variables */
             --primary-grad: linear-gradient(135deg, #a855f7 0%, #6366f1 50%, #06b6d4 100%);
             --primary: #06b6d4;
             --secondary: #6366f1;
@@ -24,7 +24,7 @@
             --border-color: rgba(99, 102, 241, 0.15);
             --accent: #f43f5e;
             --success: #10b981;
-            
+
             --bg-glow-1: rgba(168, 85, 247, 0.15);
             --bg-glow-2: rgba(6, 182, 212, 0.12);
             --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
@@ -38,7 +38,6 @@
         }
 
         html[data-theme="light"] {
-            /* Light Theme variables */
             --primary-grad: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
             --primary: #6366f1;
             --secondary: #a855f7;
@@ -49,7 +48,7 @@
             --border-color: rgba(226, 232, 240, 0.8);
             --accent: #f43f5e;
             --success: #10b981;
-            
+
             --bg-glow-1: rgba(99, 102, 241, 0.05);
             --bg-glow-2: rgba(168, 85, 247, 0.05);
             --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
@@ -67,7 +66,7 @@
             margin: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
-            background-image: 
+            background-image:
                 radial-gradient(at 0% 0%, var(--bg-glow-1) 0px, transparent 50%),
                 radial-gradient(at 100% 100%, var(--bg-glow-2) 0px, transparent 50%);
             background-attachment: fixed;
@@ -226,77 +225,131 @@
         }
     </style>
 </head>
+
 <body>
 
     <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()"></button>
 
     <div class="card">
         <h2>Welcome Back</h2>
+
         <form id="loginForm">
+
             <div class="form-group">
                 <label for="email">Email Address</label>
                 <input type="email" id="email" required placeholder="Enter your email">
             </div>
+
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" required placeholder="Enter your password">
             </div>
+
             <button type="submit" class="btn">Login</button>
+
             <div id="errorMsg" class="error"></div>
+
         </form>
+
         <div class="links">
             <a href="register.html">Don't have an account? Register</a>
         </div>
     </div>
 
     <script>
-        // Theme toggling functions
+
         function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            const currentTheme =
+                document.documentElement.getAttribute('data-theme') || 'dark';
+
+            const newTheme =
+                currentTheme === 'dark' ? 'light' : 'dark';
+
             document.documentElement.setAttribute('data-theme', newTheme);
+
             localStorage.setItem('theme', newTheme);
+
             updateThemeButton(newTheme);
         }
 
         function updateThemeButton(theme) {
+
             const btn = document.getElementById('themeToggle');
+
             if (btn) {
-                btn.innerHTML = theme === 'dark' ? '☀️' : '🌙';
+                btn.innerHTML =
+                    theme === 'dark' ? '☀️' : '🌙';
             }
         }
-        
-        // Initial Theme Toggle button load
+
         updateThemeButton(savedTheme);
 
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('errorMsg');
+        document
+            .getElementById('loginForm')
+            .addEventListener('submit', async (e) => {
 
-            try {
-                const res = await fetch('http://127.0.0.1:5000/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-                
-                const data = await res.json();
-                
-                if (res.ok) {
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    window.location.href = 'shop.html';
-                } else {
-                    errorDiv.innerText = data.error || 'Login failed';
+                e.preventDefault();
+
+                const email =
+                    document.getElementById('email').value;
+
+                const password =
+                    document.getElementById('password').value;
+
+                const errorDiv =
+                    document.getElementById('errorMsg');
+
+                try {
+
+                    // UPDATED RENDER BACKEND URL
+                    const res = await fetch(
+                        'https://advanced-ecommerce-db-system.onrender.com/api/auth/login',
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                email,
+                                password
+                            })
+                        }
+                    );
+
+                    const data = await res.json();
+
+                    if (res.ok) {
+
+                        localStorage.setItem('token', data.token);
+
+                        localStorage.setItem(
+                            'user',
+                            JSON.stringify(data.user)
+                        );
+
+                        window.location.href = 'shop.html';
+
+                    } else {
+
+                        errorDiv.innerText =
+                            data.error || 'Login failed';
+
+                        errorDiv.style.display = 'block';
+                    }
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    errorDiv.innerText =
+                        'Network error. Ensure backend is running.';
+
                     errorDiv.style.display = 'block';
                 }
-            } catch (error) {
-                errorDiv.innerText = 'Network error. Ensure backend is running.';
-                errorDiv.style.display = 'block';
-            }
-        });
+            });
+
     </script>
+
 </body>
 </html>
