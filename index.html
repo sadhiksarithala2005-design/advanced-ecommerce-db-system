@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - ShopEase E-Commerce Project</title>
+    <!-- Apply theme early to prevent flash -->
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+    <!-- Import Premium Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Default Dark Theme variables */
+            --primary-grad: linear-gradient(135deg, #a855f7 0%, #6366f1 50%, #06b6d4 100%);
+            --primary: #06b6d4;
+            --secondary: #6366f1;
+            --bg-color: #060713;
+            --card-bg: rgba(18, 20, 38, 0.7);
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(99, 102, 241, 0.15);
+            --accent: #f43f5e;
+            --success: #10b981;
+            
+            --bg-glow-1: rgba(168, 85, 247, 0.15);
+            --bg-glow-2: rgba(6, 182, 212, 0.12);
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            --card-hover-shadow: 0 20px 40px rgba(6, 182, 212, 0.12);
+            --card-hover-border: rgba(6, 182, 212, 0.4);
+            --nav-bg: rgba(8, 9, 20, 0.75);
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --input-focus-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        html[data-theme="light"] {
+            /* Light Theme variables */
+            --primary-grad: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --bg-color: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-color: #0f172a;
+            --text-muted: #64748b;
+            --border-color: rgba(226, 232, 240, 0.8);
+            --accent: #f43f5e;
+            --success: #10b981;
+            
+            --bg-glow-1: rgba(99, 102, 241, 0.05);
+            --bg-glow-2: rgba(168, 85, 247, 0.05);
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            --card-hover-shadow: 0 20px 40px rgba(99, 102, 241, 0.08);
+            --card-hover-border: rgba(99, 102, 241, 0.2);
+            --nav-bg: rgba(255, 255, 255, 0.8);
+            --input-bg: rgba(241, 245, 249, 0.6);
+            --input-focus-bg: white;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            background-image: 
+                radial-gradient(at 0% 0%, var(--bg-glow-1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, var(--bg-glow-2) 0px, transparent 50%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s, color 0.3s;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .theme-toggle-btn {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            z-index: 10;
+        }
+
+        .theme-toggle-btn:hover {
+            transform: scale(1.08) rotate(15deg);
+            background: var(--input-focus-bg);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        }
+
+        .hero-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 4rem;
+            border-radius: 32px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            max-width: 750px;
+            width: 90%;
+            margin: 2rem auto;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-hover-shadow);
+            border-color: var(--card-hover-border);
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            background: var(--primary-grad);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3.5rem;
+        }
+
+        .tech-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            padding: 1.25rem 1rem;
+            border-radius: 16px;
+            transition: all 0.3s;
+        }
+
+        .tech-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+
+        .tech-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tech-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .tech-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary-grad);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.35);
+        }
+
+        .btn-secondary {
+            background: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--input-focus-bg);
+            transform: scale(1.03);
+        }
+    </style>
+</head>
+<body>
+
+    <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()"></button>
+
+    <div class="hero-card">
+        <h1>Welcome to the E-Commerce Database Project</h1>
+        <p class="subtitle">An enterprise-grade full-stack solution utilizing a Python Flask Backend API, a MySQL Relational Database with Transaction integrity, and secure JWT Authentication.</p>
+
+        <div class="tech-stack">
+            <div class="tech-item">
+                <div class="tech-icon">⚡</div>
+                <div class="tech-title">Flask API</div>
+                <div class="tech-desc">Robust Python Backend</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon">🗄️</div>
+                <div class="tech-title">MySQL DB</div>
+                <div class="tech-desc">Relational Storage</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon">🔐</div>
+                <div class="tech-title">JWT Secure</div>
+                <div class="tech-desc">Token Auth Flow</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon">🎨</div>
+                <div class="tech-title">Glass UI</div>
+                <div class="tech-desc">Dark & Light Themes</div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <a href="login.html" id="enterBtn" class="btn btn-primary">Get Started / Login</a>
+            <a href="register.html" id="registerBtn" class="btn btn-secondary">Create Account</a>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggling functions
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeButton(newTheme);
+        }
+
+        function updateThemeButton(theme) {
+            const btn = document.getElementById('themeToggle');
+            if (btn) {
+                btn.innerHTML = theme === 'dark' ? '☀️' : '🌙';
+            }
+        }
+        
+        // Initial Theme Toggle button load
+        updateThemeButton(savedTheme);
+
+        // Dynamic Auth-checking Button Redirections
+        function checkAuthState() {
+            const token = localStorage.getItem('token');
+            const userStr = localStorage.getItem('user');
+            const enterBtn = document.getElementById('enterBtn');
+            
+            if (token && userStr) {
+                try {
+                    const user = JSON.parse(userStr);
+                    enterBtn.innerText = `Continue as ${user.Name || 'Guest'}`;
+                    enterBtn.href = 'shop.html';
+                } catch (e) {
+                    console.error('Error parsing local user:', e);
+                }
+            } else {
+                enterBtn.innerText = 'Get Started / Login';
+                enterBtn.href = 'login.html';
+            }
+        }
+
+        checkAuthState();
+    </script>
+</body>
+</html>
