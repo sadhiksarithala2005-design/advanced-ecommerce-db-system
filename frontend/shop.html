@@ -551,177 +551,351 @@
             <button onclick="closeProfileModal()" class="btn" style="margin-top:0.5rem;">Close Profile</button>
         </div>
     </div>
+<script>
+    // ================================
+    // CHANGE THIS URL ONLY
+    // ================================
+    const API_URL = 'https://advanced-ecommerce-db-system-1.onrender.com/api/products';
 
-    <script>
-        const API_URL = 'http://127.0.0.1:5000/api/products';
-        let currentCategory = 'All';
-        
-        // Initialize Auth State & Profile Pill
-        function updateAuthState() {
-            const token = localStorage.getItem('token');
-            const userStr = localStorage.getItem('user');
-            
-            if (token) {
-                document.getElementById('loginLink').style.display = 'none';
-                document.getElementById('logoutLink').style.display = 'inline';
-                
-                if (userStr) {
-                    try {
-                        const user = JSON.parse(userStr);
-                        document.getElementById('profileName').innerText = user.Name || 'Profile';
-                        document.getElementById('userProfile').style.display = 'inline-flex';
-                        
-                        // Populate modal details
-                        document.getElementById('modalUserName').innerText = user.Name || 'User Profile';
-                        document.getElementById('modalUserEmail').innerText = user.Email || 'No email registered';
-                        document.getElementById('modalUserPhone').innerText = user.Phone || 'Not Provided';
-                        document.getElementById('modalUserAddress').innerText = user.Address || 'Not Provided';
-                    } catch (e) {
-                        console.error('Error parsing user data:', e);
-                    }
+    let currentCategory = 'All';
+
+    // ================================
+    // AUTH STATE
+    // ================================
+    function updateAuthState() {
+        const token = localStorage.getItem('token');
+        const userStr = localStorage.getItem('user');
+
+        if (token) {
+            document.getElementById('loginLink').style.display = 'none';
+            document.getElementById('logoutLink').style.display = 'inline';
+
+            if (userStr) {
+                try {
+                    const user = JSON.parse(userStr);
+
+                    document.getElementById('profileName').innerText =
+                        user.Name || 'Profile';
+
+                    document.getElementById('userProfile').style.display =
+                        'inline-flex';
+
+                    document.getElementById('modalUserName').innerText =
+                        user.Name || 'User Profile';
+
+                    document.getElementById('modalUserEmail').innerText =
+                        user.Email || 'No email registered';
+
+                    document.getElementById('modalUserPhone').innerText =
+                        user.Phone || 'Not Provided';
+
+                    document.getElementById('modalUserAddress').innerText =
+                        user.Address || 'Not Provided';
+
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
                 }
-            } else {
-                document.getElementById('loginLink').style.display = 'inline';
-                document.getElementById('logoutLink').style.display = 'none';
-                document.getElementById('userProfile').style.display = 'none';
             }
+
+        } else {
+            document.getElementById('loginLink').style.display = 'inline';
+
+            document.getElementById('logoutLink').style.display = 'none';
+
+            document.getElementById('userProfile').style.display = 'none';
+        }
+    }
+
+    // ================================
+    // PROFILE MODAL
+    // ================================
+    function openProfileModal() {
+        document.getElementById('profileModal').style.display = 'flex';
+    }
+
+    function closeProfileModal() {
+        document.getElementById('profileModal').style.display = 'none';
+    }
+
+    function closeProfileModalOnOuterClick(e) {
+        if (e.target.id === 'profileModal') {
+            closeProfileModal();
+        }
+    }
+
+    // ================================
+    // LOGOUT
+    // ================================
+    function logout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+
+        window.location.reload();
+    }
+
+    // ================================
+    // CART BADGE
+    // ================================
+    function updateCartBadge() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        document.getElementById('cartCount').innerText = cart.length;
+    }
+
+    // ================================
+    // FORMAT MONEY
+    // ================================
+    function formatMoney(amount) {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR'
+        }).format(amount);
+    }
+
+    // ================================
+    // FETCH PRODUCTS
+    // ================================
+    async function fetchProducts() {
+
+        document.getElementById('loading').style.display = 'block';
+
+        document.getElementById('productGrid').innerHTML = '';
+
+        const search = document.getElementById('searchInput').value;
+
+        const sort = document.getElementById('sortSelect').value;
+
+        const maxPrice = document.getElementById('priceRange').value;
+
+        let url =
+            `${API_URL}?sort=${sort}&max_price=${maxPrice}`;
+
+        if (currentCategory !== 'All') {
+            url += `&category=${currentCategory}`;
         }
 
-        // Profile Modal controllers
-        function openProfileModal() {
-            const modal = document.getElementById('profileModal');
-            modal.style.display = 'flex';
+        if (search) {
+            url += `&search=${search}`;
         }
 
-        function closeProfileModal() {
-            const modal = document.getElementById('profileModal');
-            modal.style.display = 'none';
-        }
+        try {
 
-        function closeProfileModalOnOuterClick(e) {
-            if (e.target.id === 'profileModal') {
-                closeProfileModal();
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error('Backend response failed');
             }
+
+            const data = await response.json();
+
+            renderProducts(data.products || []);
+
+            document.getElementById('productCount').innerText =
+                `${data.total || 0} Products Found`;
+
+        } catch (error) {
+
+            console.error(error);
+
+            document.getElementById('productGrid').innerHTML = `
+                <p style="color:red; font-weight:600;">
+                    Error loading products.
+                    Backend not connected properly.
+                </p>
+            `;
+
+        } finally {
+
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+
+    // ================================
+    // RENDER PRODUCTS
+    // ================================
+    function renderProducts(products) {
+
+        const grid = document.getElementById('productGrid');
+
+        grid.innerHTML = '';
+
+        if (products.length === 0) {
+
+            grid.innerHTML = `
+                <p style="color:var(--text-muted);">
+                    No products found
+                </p>
+            `;
+
+            return;
         }
 
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.reload();
-        }
+        products.forEach(product => {
 
-        // Initialize Cart Count
-        function updateCartBadge() {
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            document.getElementById('cartCount').innerText = cart.length;
-        }
+            const isOutOfStock = product.Quantity === 0;
 
-        // Format Currency
-        const formatMoney = (amount) => {
-            return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
-        };
+            const badgeClass =
+                isOutOfStock ? 'out-stock' : 'in-stock';
 
-        // Fetch Products
-        async function fetchProducts() {
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('productGrid').innerHTML = '';
-            
-            const search = document.getElementById('searchInput').value;
-            const sort = document.getElementById('sortSelect').value;
-            const maxPrice = document.getElementById('priceRange').value;
-            
-            let url = `${API_URL}?sort=${sort}&max_price=${maxPrice}`;
-            if (currentCategory !== 'All') url += `&category=${currentCategory}`;
-            if (search) url += `&search=${search}`;
+            const badgeText =
+                isOutOfStock ? 'Out of Stock' : 'In Stock';
 
-            try {
-                const res = await fetch(url);
-                const data = await res.json();
-                renderProducts(data.products || []);
-                document.getElementById('productCount').innerText = `${data.total || 0} Products Found`;
-            } catch (error) {
-                console.error('Error fetching products:', error);
-                document.getElementById('productGrid').innerHTML = '<p>Error loading products. Ensure backend is running.</p>';
-            } finally {
-                document.getElementById('loading').style.display = 'none';
-            }
-        }
+            grid.innerHTML += `
+                <div class="card">
 
-        // Render Cards
-        function renderProducts(products) {
-            const grid = document.getElementById('productGrid');
-            products.forEach(p => {
-                const isOutOfStock = p.Quantity === 0;
-                const badgeClass = isOutOfStock ? 'out-stock' : 'in-stock';
-                const badgeText = isOutOfStock ? 'Out of Stock' : 'In Stock';
-                
-                grid.innerHTML += `
-                    <div class="card">
-                        <div class="card-image-wrap">
-                            <img src="${p.Image_URL || 'https://via.placeholder.com/250'}" alt="${p.Product_Name}">
-                        </div>
-                        <div class="card-details">
-                            <div class="card-title">${p.Product_Name}</div>
-                            <div class="badge ${badgeClass}">${badgeText}</div>
-                            <div class="card-price">${formatMoney(p.Price)}</div>
-                            <button class="btn" ${isOutOfStock ? 'disabled' : ''} onclick="addToCart(${p.Product_ID}, '${p.Product_Name}', ${p.Price})">
-                                ${isOutOfStock ? 'Unavailable' : 'Add to Cart'}
-                            </button>
-                        </div>
+                    <div class="card-image-wrap">
+                        <img
+                            src="${product.Image_URL || 'https://via.placeholder.com/250'}"
+                            alt="${product.Product_Name}"
+                        >
                     </div>
-                `;
+
+                    <div class="card-details">
+
+                        <div class="card-title">
+                            ${product.Product_Name}
+                        </div>
+
+                        <div class="badge ${badgeClass}">
+                            ${badgeText}
+                        </div>
+
+                        <div class="card-price">
+                            ${formatMoney(product.Price)}
+                        </div>
+
+                        <button
+                            class="btn"
+                            ${isOutOfStock ? 'disabled' : ''}
+                            onclick="addToCart(
+                                ${product.Product_ID},
+                                '${product.Product_Name}',
+                                ${product.Price}
+                            )"
+                        >
+                            ${isOutOfStock ? 'Unavailable' : 'Add to Cart'}
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+        });
+    }
+
+    // ================================
+    // ADD TO CART
+    // ================================
+    function addToCart(id, name, price) {
+
+        let cart =
+            JSON.parse(localStorage.getItem('cart')) || [];
+
+        const existingItem =
+            cart.find(item => item.product_id === id);
+
+        if (existingItem) {
+
+            existingItem.quantity += 1;
+
+        } else {
+
+            cart.push({
+                product_id: id,
+                name,
+                price,
+                quantity: 1
             });
         }
 
-        // Add to Cart
-        function addToCart(id, name, price) {
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const existingItem = cart.find(item => item.product_id === id);
-            
-            if (existingItem) existingItem.quantity += 1;
-            else cart.push({ product_id: id, name, price, quantity: 1 });
-            
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartBadge();
-            alert('Added to cart!');
-        }
+        localStorage.setItem('cart', JSON.stringify(cart));
 
-        // Event Listeners
-        document.getElementById('searchInput').addEventListener('input', fetchProducts);
-        document.getElementById('sortSelect').addEventListener('change', fetchProducts);
-        document.getElementById('priceRange').addEventListener('input', (e) => {
-            document.getElementById('priceValue').innerText = `₹${e.target.value}`;
+        updateCartBadge();
+
+        alert('Added to cart!');
+    }
+
+    // ================================
+    // FILTER CATEGORY
+    // ================================
+    function filterCategory(category) {
+
+        currentCategory = category;
+
+        document
+            .querySelectorAll('.category-btn')
+            .forEach(btn => btn.classList.remove('active'));
+
+        document
+            .getElementById(`btn-${category}`)
+            .classList.add('active');
+
+        fetchProducts();
+    }
+
+    // ================================
+    // THEME TOGGLE
+    // ================================
+    function toggleTheme() {
+
+        const currentTheme =
+            document.documentElement.getAttribute('data-theme') || 'dark';
+
+        const newTheme =
+            currentTheme === 'dark' ? 'light' : 'dark';
+
+        document.documentElement.setAttribute(
+            'data-theme',
+            newTheme
+        );
+
+        localStorage.setItem('theme', newTheme);
+
+        updateThemeButton(newTheme);
+    }
+
+    function updateThemeButton(theme) {
+
+        const btn =
+            document.getElementById('themeToggle');
+
+        if (btn) {
+            btn.innerHTML =
+                theme === 'dark' ? '☀️' : '🌙';
+        }
+    }
+
+    // ================================
+    // EVENT LISTENERS
+    // ================================
+    document
+        .getElementById('searchInput')
+        .addEventListener('input', fetchProducts);
+
+    document
+        .getElementById('sortSelect')
+        .addEventListener('change', fetchProducts);
+
+    document
+        .getElementById('priceRange')
+        .addEventListener('input', (e) => {
+
+            document.getElementById('priceValue').innerText =
+                `₹${e.target.value}`;
+
             fetchProducts();
         });
 
-        function filterCategory(cat) {
-            currentCategory = cat;
-            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`btn-${cat}`).classList.add('active');
-            fetchProducts();
-        }
+    // ================================
+    // INITIAL LOAD
+    // ================================
+    updateAuthState();
 
-        // Theme toggling functions
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeButton(newTheme);
-        }
+    updateCartBadge();
 
-        function updateThemeButton(theme) {
-            const btn = document.getElementById('themeToggle');
-            if (btn) {
-                btn.innerHTML = theme === 'dark' ? '☀️' : '🌙';
-            }
-        }
+    updateThemeButton(savedTheme);
 
-        // Initial Load
-        updateAuthState();
-        updateCartBadge();
-        updateThemeButton(savedTheme);
-        fetchProducts();
-    </script>
+    fetchProducts();
+</script>
 </body>
 </html>
