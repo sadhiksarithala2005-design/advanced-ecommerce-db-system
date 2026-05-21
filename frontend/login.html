@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ShopEase</title>
+
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-grad: linear-gradient(135deg, #a855f7 0%, #6366f1 50%, #06b6d4 100%);
+            --primary: #06b6d4;
+            --secondary: #6366f1;
+            --bg-color: #060713;
+            --card-bg: rgba(18, 20, 38, 0.7);
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(99, 102, 241, 0.15);
+            --accent: #f43f5e;
+            --success: #10b981;
+
+            --bg-glow-1: rgba(168, 85, 247, 0.15);
+            --bg-glow-2: rgba(6, 182, 212, 0.12);
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            --card-hover-shadow: 0 20px 40px rgba(6, 182, 212, 0.12);
+            --card-hover-border: rgba(6, 182, 212, 0.4);
+            --nav-bg: rgba(8, 9, 20, 0.75);
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --input-focus-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            background: var(--primary-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.85rem 1.25rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.85rem;
+            background: var(--primary-grad);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1.5rem;
+        }
+
+        .error {
+            color: #ff4d6d;
+            background: rgba(255,0,0,0.1);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        a {
+            color: #06b6d4;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+
+        <h2>Welcome Back</h2>
+
+        <form id="loginForm">
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="email" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" required>
+            </div>
+
+            <button type="submit" class="btn">Login</button>
+
+            <div id="errorMsg" class="error"></div>
+
+        </form>
+
+        <div class="links">
+            <a href="register.html">Don't have an account? Register</a>
+        </div>
+
+    </div>
+
+    <script>
+
+        document
+            .getElementById('loginForm')
+            .addEventListener('submit', async (e) => {
+
+                e.preventDefault();
+
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                const errorDiv =
+                    document.getElementById('errorMsg');
+
+                try {
+
+                    // CORRECT RENDER BACKEND URL
+                    const response = await fetch(
+                        'https://advanced-ecommerce-db-system-1.onrender.com/api/auth/login',
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                email: email,
+                                password: password
+                            })
+                        }
+                    );
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+
+                        localStorage.setItem(
+                            'token',
+                            data.token
+                        );
+
+                        localStorage.setItem(
+                            'user',
+                            JSON.stringify(data.user)
+                        );
+
+                        window.location.href = 'shop.html';
+
+                    } else {
+
+                        errorDiv.innerText =
+                            data.error || 'Login failed';
+
+                        errorDiv.style.display = 'block';
+                    }
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    errorDiv.innerText =
+                        'Backend connection failed';
+
+                    errorDiv.style.display = 'block';
+                }
+
+            });
+
+    </script>
+
+</body>
+</html>
